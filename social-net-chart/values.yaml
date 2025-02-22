@@ -11,7 +11,7 @@ redis:
   image: redis:alpine
 
 golangApp:
-  image: van4ik/social-net:1.0.3
+  image: van4ik/social-net:1.0.4
   replicaCount: 5
   servicePort: 80
 
