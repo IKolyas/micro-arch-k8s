@@ -1,0 +1,21 @@
+namespace: social-net
+
+postgres:
+  image: postgis/postgis:17-3.5
+  dbName: social
+  dbUser: social
+  dbPassword: social
+  storage: 10Gi
+
+redis:
+  image: redis:alpine
+
+golangApp:
+  image: van4ik/social-net:1.0.3
+  replicaCount: 5
+  servicePort: 80
+
+ingress:
+  enabled: true
+  className: "nginx"
+  host: arch.homework

@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: golang-app
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.golangApp.replicaCount }}
+  selector:
+    matchLabels:
+      app: golang-app
+  template:
+    metadata:
+      labels:
+        app: golang-app
+    spec:
+      initContainers:
+        - name: wait-for-db
+          image: busybox
+          command: ['sh', '-c', 'until nc -z postgres 5432; do echo "Waiting for DB..."; sleep 2; done']
+      containers:
+      - name: golang-app
+        image: {{ .Values.golangApp.image }}
+        env:
+        - name: DB_MASTER
+          value: "postgres://social:social@postgres:5432/social"
+        - name: DB_SLAVE1
+          value: "postgres://social:social@postgres:5432/social"
+        - name: DB_SLAVE2
+          value: "postgres://social:social@postgres:5432/social"
+        - name: SERVER_PORT
+          value: "80"
+        - name: REDIS_CONNECTION
+          value: "redis:6379"
+        ports:
+        - containerPort: {{ .Values.golangApp.servicePort }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      enabled: true
+      maxSurge: 1
+      maxUnavailable: 1
