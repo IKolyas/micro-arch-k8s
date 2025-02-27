@@ -5,8 +5,8 @@ metadata:
   namespace: {{ .Values.namespace }}
 spec:
   ports:
-  - port: {{ .Values.golangApp.servicePort }}
-    targetPort: {{ .Values.golangApp.servicePort }}
+  - port: {{ .Values.app.servicePort }}
+    targetPort: {{ .Values.app.servicePort }}
   selector:
     app: golang-app
   type: LoadBalancer

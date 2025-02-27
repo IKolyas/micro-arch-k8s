@@ -17,5 +17,5 @@ spec:
           service:
             name: golang-app
             port:
-              number: {{ .Values.golangApp.servicePort }}
+              number: {{ .Values.app.servicePort }}
 {{- end }}

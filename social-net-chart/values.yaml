@@ -1,17 +1,20 @@
 namespace: social-net
 
 postgres:
-  image: postgis/postgis:17-3.5
+  image: postgis/postgis
+  tag: 17-3.5
   dbName: social
   dbUser: social
   dbPassword: social
   storage: 10Gi
 
 redis:
-  image: redis:alpine
+  image: redis
+  tag: alpine
 
-golangApp:
-  image: van4ik/social-net:1.0.4
+app:
+  image: van4ik/social-net
+  tag: 1.0.4
   replicaCount: 5
   servicePort: 80
 

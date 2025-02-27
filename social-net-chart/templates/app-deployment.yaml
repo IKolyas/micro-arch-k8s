@@ -4,7 +4,7 @@ metadata:
   name: golang-app
   namespace: {{ .Values.namespace }}
 spec:
-  replicas: {{ .Values.golangApp.replicaCount }}
+  replicas: {{ .Values.app.replicaCount }}
   selector:
     matchLabels:
       app: golang-app
@@ -19,7 +19,7 @@ spec:
           command: ['sh', '-c', 'until nc -z postgres 5432; do echo "Waiting for DB..."; sleep 2; done']
       containers:
       - name: golang-app
-        image: {{ .Values.golangApp.image }}
+        image: "{{ .Values.app.image }}:{{ .Values.app.tag }}"
         env:
         - name: DB_MASTER
           value: "postgres://social:social@postgres:5432/social"
@@ -32,10 +32,9 @@ spec:
         - name: REDIS_CONNECTION
           value: "redis:6379"
         ports:
-        - containerPort: {{ .Values.golangApp.servicePort }}
+        - containerPort: {{ .Values.app.servicePort }}
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      enabled: true
       maxSurge: 1
       maxUnavailable: 1

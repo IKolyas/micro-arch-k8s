@@ -1,45 +1,3 @@
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: postgres
-  namespace: {{ .Values.namespace }}
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: postgres
-  template:
-    metadata:
-      labels:
-        app: postgres
-    spec:
-      containers:
-      - name: postgres
-        image: {{ .Values.postgres.image }}
-        env:
-        - name: PGPASSWORD
-          value: {{ .Values.postgres.dbPassword | quote }}
-        - name: POSTGRES_DB
-          value: {{ .Values.postgres.dbName | quote }}
-        - name: POSTGRES_USER
-          value: {{ .Values.postgres.dbUser | quote }}
-        - name: POSTGRES_PASSWORD
-          value: {{ .Values.postgres.dbPassword | quote }}
-        ports:
-        - containerPort: 5432
-        volumeMounts:
-        - mountPath: /var/lib/postgresql/data
-          name: postgres-data
-        - mountPath: /docker-entrypoint-initdb.d/
-          name: postgres-init-script
-      volumes:
-      - name: postgres-data
-        persistentVolumeClaim:
-          claimName: postgres-pvc
-      - name: postgres-init-script
-        configMap:
-          name: postgres-init-script
----
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -99,27 +57,3 @@ data:
     CREATE INDEX idx_dialog_participants_user_id ON dialog_participants(user_id);
     CREATE INDEX idx_friends_user_id ON friends(user_id);
     CREATE INDEX idx_friends_friend_id ON friends(friend_id);
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: postgres
-  namespace: {{ .Values.namespace }}
-spec:
-  ports:
-  - port: 5432
-    targetPort: 5432
-  selector:
-    app: postgres
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: postgres-pvc
-  namespace: {{ .Values.namespace }}
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: {{ .Values.postgres.storage }}
